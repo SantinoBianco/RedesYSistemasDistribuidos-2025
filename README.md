@@ -1,44 +1,39 @@
-# Redes y Sistemas Distribuidos — laboratorios (2025)
+# Redes y Sistemas Distribuidos — APIs, sockets y simulación
 
-Repositorio que registra los cuatro laboratorios del **grupo 35** de la materia **Redes y Sistemas Distribuidos (2025)**.
+Trabajos grupales de **Redes y Sistemas Distribuidos (FAMAF–UNC, 2025)**. A partir del respaldo original se identificaron cuatro proyectos:
 
-> **Estado actual:** las cuatro entradas del repositorio son **referencias Git a commits externos** (`gitlinks`, modo `160000`), no carpetas con archivos de código. No hay un archivo `.gitmodules` que permita conocer las URLs originales. Por lo tanto, **no es posible ver la implementación de los laboratorios ni ejecutarlos desde este repositorio tal como está**.
+| Laboratorio | Qué contiene | Tecnologías |
+| --- | --- | --- |
+| `redes25lab1g35` | API REST de películas: consultas, altas/bajas/cambios y recomendaciones vinculadas con feriados | Python, Flask, Requests, Pytest |
+| `redes25lab2g35` | Cliente-servidor para transferencia de archivos sobre TCP, protocolo HFTP y concurrencia con hilos | Python, sockets, threading |
+| `redes25lab3g35` | Experimentos de congestión y control de flujo, colas, feedback y pérdidas | C++, OMNeT++, NED |
+| `redes25lab4g35` | Evaluación de enrutamiento en una red en anillo, demoras, saltos y ocupación de buffers | C++, OMNeT++, informes y gráficos |
 
-## Trabajos registrados
+## Cómo se ejecutan (sobre una copia con el código)
 
-| Entrada | Registro disponible |
-| --- | --- |
-| `redes25lab1g35` | Referencia al commit del laboratorio 1 |
-| `redes25lab2g35` | Referencia al commit del laboratorio 2 |
-| `redes25lab3g35` | Referencia al commit del laboratorio 3 |
-| `redes25lab4g35` | Referencia al commit del laboratorio 4 |
+**Lab 1:** dentro de la carpeta, instalar dependencias con `python3 -m venv .venv`, activar el entorno, ejecutar `pip install -r requirements.txt` y luego `python main.py`. La API local arranca normalmente en `http://127.0.0.1:5000`; un endpoint es `GET /peliculas`.
 
-El nombre del repositorio refleja el área de estudio (**redes y sistemas distribuidos**). Sin el código fuente de las entregas, **no es posible confirmar qué protocolos, herramientas, lenguajes o funcionalidades se implementaron en cada laboratorio**. Para un lector externo es importante distinguir la materia de las implementaciones concretas.
-
-## Cómo consultar los registros Git
-
-Cloná el repositorio y revisá las referencias:
+**Lab 2:** primero, dentro de `redes25lab2g35/`:
 
 ```bash
-git clone https://github.com/SantinoBianco/RedesYSistemasDistribuidos-2025.git
-cd RedesYSistemasDistribuidos-2025
-git ls-tree HEAD
+mkdir -p testdata
+python3 server.py --address 127.0.0.1 --port 19500 --datadir testdata
 ```
 
-Este comando devuelve las entradas de tipo `commit` y sus SHA. **No descarga los trabajos originales.**
+En otra terminal, desde la misma carpeta:
 
-En su estado actual, `git submodule update --init --recursive` **no alcanza**, porque falta la configuración `.gitmodules` con las URLs y los caminos de los repositorios vinculados.
+```bash
+python3 client.py --port 19500 127.0.0.1
+```
 
-## Para completar el portafolio
+Esto configura una prueba local, **no** un servicio apto para publicar en Internet.
 
-Una vez recuperadas las ubicaciones originales de los laboratorios:
+**Lab 3:** requiere OMNeT++ y las herramientas de compilación del curso. En `redes25lab3g35/`, el proyecto dispone de `network.ned`, `Packet.msg`, `omnetpp.ini` y `Makefile`; normalmente se compila con `make` y se ejecuta con el ejecutable generado (`lab3-kickstarter`) y el archivo `omnetpp.ini`. Puede requerir adaptar Makefile a la versión de OMNeT++.
 
-1. Añadir vínculos directos a los repositorios de origen (si son públicos).
-2. Si corresponde, traer el código a directorios versionados o configurar adecuadamente los submódulos.
-3. Documentar **por laboratorio** el objetivo, lenguaje, archivos principales, cómo probarlo y resultados observables.
+**Lab 4:** el respaldo conserva fuentes `.cc`, configuraciones, informes y gráficos, **pero faltan `packet.msg` y la definición NED de la red**, necesarias para reconstruir y ejecutar toda la simulación. No se debe presentar como ejecutable sin recuperar esos archivos.
 
-No se incluyen instrucciones genéricas para levantar servidores o clientes de red porque **ninguno de esos comandos puede verificarse contra el código disponible en este repositorio**.
+## Estado actual de GitHub
 
----
+**Las cuatro entradas del repositorio todavía son `gitlinks` y no muestran el código.** El código que permitió identificar estos proyectos está en un ZIP local recuperado, pero aún debe incorporarse al repositorio Git como carpetas versionadas. Por eso las instrucciones de arriba no funcionan sobre un clon vacío del repositorio actual.
 
-**Contexto:** trabajos prácticos académicos de Redes y Sistemas Distribuidos (2025). Este README explica con precisión lo que está disponible y qué falta para que las entregas sean revisables.
+No se verificó la ejecución completa de los cuatro laboratorios en el entorno presente.
