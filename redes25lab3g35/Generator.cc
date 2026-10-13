@@ -1,0 +1,64 @@
+#ifndef GENERATOR
+#define GENERATOR
+
+#include <omnetpp.h>
+#include <string.h>
+#include "Packet_m.h"
+
+using namespace omnetpp;
+
+class Generator : public cSimpleModule {
+private:
+    cMessage* sendMsgEvent = NULL;
+    cStdDev transmissionStats;
+    cOutVector sentPacketsVector;
+    unsigned int sentPackets = 0;
+
+public:
+    Generator();
+    ~Generator() override;
+
+protected:
+    void initialize() override;
+    void finish() override;
+    void handleMessage(cMessage* msg) override;
+};
+Define_Module(Generator);
+
+Generator::Generator() {
+}
+
+Generator::~Generator() {
+    cancelAndDelete(sendMsgEvent);
+}
+
+void Generator::initialize() {
+    transmissionStats.setName("TotalTransmissions");
+    sentPacketsVector.setName("SentPackets");
+    sentPackets = 0;
+    // create the send packet
+    sendMsgEvent = new cMessage("sendEvent");
+    // schedule the first event at random time
+    scheduleAt(par("generationInterval"), sendMsgEvent);
+}
+
+void Generator::finish() {
+}
+
+void Generator::handleMessage(cMessage* msg) {
+
+    // create new packet
+    cPacket *pkt;
+    pkt = new cPacket("packet");
+    pkt->setByteLength(par("packetByteSize"));
+    // send to the output
+    send(pkt, "out");
+    sentPacketsVector.record(++sentPackets);
+
+    // compute the new departure time
+    simtime_t departureTime = simTime() + par("generationInterval");
+    // schedule the new packet generation
+    scheduleAt(departureTime, sendMsgEvent);
+}
+
+#endif /* GENERATOR */
